@@ -1,0 +1,34 @@
+# Ignorowanie plików Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorowanie folderów związanych z wirtualnym środowiskiem
+venv/
+env/
+.venv/
+# .env/
+
+# Ignorowanie plików i folderów systemowych
+.DS_Store
+Thumbs.db
+
+# Ignorowanie folderu bazy danych w Django
+db.sqlite3
+
+# Ignorowanie plików konfiguracyjnych i wtyczek (jeśli używasz git, można ignorować .git/)
+.git/
+*.gitignore
+
+# Ignorowanie plików tymczasowych i cache
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorowanie plików, które są częścią środowiska developerskiego
+docker-compose.yml
+Dockerfile
+README.md

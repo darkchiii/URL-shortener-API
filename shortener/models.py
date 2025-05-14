@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime, timedelta
 from django.utils import timezone
+from .utils import generate_short_code
 
 def get_expiration_date():
     return timezone.now() + timedelta(days=7)
@@ -18,6 +19,11 @@ class ShortUrl(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.short_url:
+            self.short_url = generate_short_code(self.original_url, 8)
+        super().save(*args, **kwargs)
 
 class Visit(models.Model):
     short_url = models.ForeignKey(ShortUrl, on_delete=models.CASCADE)

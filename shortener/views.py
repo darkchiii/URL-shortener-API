@@ -7,12 +7,13 @@ from .models import ShortUrl, Visit
 from django.utils import timezone
 from time import time
 import ipaddress
-import hashlib
+from .utils import generate_short_code
+# import hashlib
 
-def generate_short_code(original_url, length):
-    hash_object = hashlib.sha256(original_url.encode())
-    short_hash = hash_object.hexdigest()[:length]
-    return short_hash
+# def generate_short_code(original_url, length):
+#     hash_object = hashlib.sha256(original_url.encode())
+#     short_hash = hash_object.hexdigest()[:length]
+#     return short_hash
 
 class ShortUrlViewSet(viewsets.ViewSet):
     def create(self, request):
@@ -30,7 +31,7 @@ class ShortUrlViewSet(viewsets.ViewSet):
                     while True:
                         try:
                             ShortUrl.objects.get(short_url=short_code)
-                            short_code = generate_short_code(original_url + str(time.time()))
+                            short_code = generate_short_code(original_url + str(time()))
                         except ShortUrl.DoesNotExist:
                             break
 
@@ -86,6 +87,7 @@ class VisitViewSet(viewsets.ViewSet):
             last_visitor = Visit.objects.filter(short_url=short_obj).order_by('-visited_at').first()
 
             if last_visitor is not None:
+                last_visit_time = last_visitor.visited_at
                 pass
             else:
                 last_visitor = 'No data yet!'
@@ -101,7 +103,7 @@ class VisitViewSet(viewsets.ViewSet):
                              "Visits": visits_counter,
                              "Active":  active,
                              "Days left": days_left,
-                             "Last visitor": last_visitor.visited_at,
+                             "Last visitor": last_visit_time,
             })
 
         except ShortUrl.DoesNotExist:
