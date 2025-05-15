@@ -5,7 +5,7 @@
 ![DRF](https://img.shields.io/badge/Django%20REST%20Framework-3.16.0-red.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)
 ![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)
-![CI](https://github.com/twoj-uzytkownik/twoj-repozytorium/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/darkchiii/URL-shortener-API/actions/workflows/ci.yml/badge.svg)
 ![Tested](https://img.shields.io/badge/Tested-pytest-green.svg)
 ![Formatted](https://img.shields.io/badge/Formatted-black%20%7C%20isort%20%7C%20flake8-black.svg)
 
