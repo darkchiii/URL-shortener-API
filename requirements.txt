@@ -6,6 +6,7 @@ python-dotenv==1.1.0       # ładowanie zmiennych środowiskowych z pliku .env
 
 pytest==8.2.0
 pytest-django==4.8.0
+python-dotenv
 
 black==24.3.0
 isort==5.13.2

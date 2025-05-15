@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - .env/.dev
 
 volumes:
   postgres_data:
