@@ -59,7 +59,7 @@ URL Shortener is a REST API for converting long URLs into short, easy-to-remembe
 
 - Docker and Docker Compose
 - Git
-- .env file with appropriate environment variables
+- .dev file with appropriate environment variables
 
 ### Cloning the Repository
 
@@ -70,7 +70,7 @@ cd url-shortener
 
 ### Environment Variables Configuration
 
-Create an `.env` file in the project's root directory with the following variables:
+Create an `.dev` file in the project's root directory with the following variables:
 
 ```
 # PostgreSQL Settings
@@ -80,7 +80,7 @@ POSTGRES_PASSWORD=supersecretpassword
 DB_HOST=db
 DB_PORT=5432
 ```
-Important: Ensure this .env file is properly loaded by Docker Compose and all containers (web, db, and cron) have access to these variables.
+Important: Ensure this .dev file is properly loaded by Docker Compose and all containers (web, db, and cron) have access to these variables.
 
 ### Using Docker
 
