@@ -17,6 +17,6 @@ COPY . .
 
 ENV PYTHONUNBUFFERED=1
 
-# Uruchom aplikację (zmienimy to później pod gunicorn)
+# Komendy - uruchom aplikację (zmienić później pod gunicorn)
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 

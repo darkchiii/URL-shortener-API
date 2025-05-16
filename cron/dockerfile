@@ -1,0 +1,30 @@
+FROM python:3.10-slim
+
+# Ustaw alias python → python3
+# RUN ln -s /usr/local/bin/python3 /usr/local/bin/python
+
+# Instaluj cron
+RUN apt-get update && apt-get install -y cron
+
+# Utwórz log directory
+RUN mkdir -p /var/log
+
+# Skopiuj crontab i ustaw prawa
+COPY cron/crontab /etc/cron.d/crontab
+RUN chmod 0644 /etc/cron.d/crontab
+# RUN crontab /etc/cron.d/crontab
+
+# Skopiuj entrypoint i ustaw prawa
+COPY cron/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Ustaw katalog roboczy
+WORKDIR /app
+
+# Skopiuj requirements i zainstaluj zależności
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+RUN rm /app/requirements.txt
+
+# Uruchom entrypoint
+CMD ["/entrypoint.sh"]

@@ -46,3 +46,4 @@ htmlcov/
 docker-compose.override.yml
 .docker/
 
+.dev

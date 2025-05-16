@@ -63,7 +63,7 @@ URL Shortener is a REST API for converting long URLs into short, easy-to-remembe
 ### Cloning the Repository
 
 ```bash
-git clone https://github.com/darkchiii/url-shortener.git
+git clone https://github.com/darkchiii/URL-shortener-API.git url-shortener
 cd url-shortener
 ```
 

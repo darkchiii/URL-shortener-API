@@ -4,8 +4,11 @@ services:
   db:
     image: postgres:15
     restart: always
+    # user: ${POSTGRES_USER}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .dev
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -31,7 +34,19 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env/.dev
+      - .dev
+
+  cron:
+    build:
+      context: .
+      dockerfile: ./cron/dockerfile
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - web
+    env_file:
+      - .dev
 
 volumes:
   postgres_data:
