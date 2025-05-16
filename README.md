@@ -19,6 +19,7 @@ API for shortening long URLs with visit statistics tracking functionality.
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
+- [Cron Job](#cron-job)
 - [Data Models](#data-models)
 - [Usage Examples](#usage-examples)
 - [Tests](#tests)
@@ -47,10 +48,10 @@ URL Shortener is a REST API for converting long URLs into short, easy-to-remembe
 - Django REST Framework 3.16.0
 - PostgreSQL 15
 - Docker and Docker Compose
-- Gunicorn 23.0.0 (WSGI server)
 - Testing tools: pytest 8.2.0, pytest-django 4.8.0
 - Code formatting tools: black 24.3.0, isort 5.13.2, flake8 7.0.0
 - python-dotenv 1.1.0 for environment variables management
+- Cron (system scheduler) inside Docker container for periodic tasks
 
 ## Installation
 
@@ -79,6 +80,7 @@ POSTGRES_PASSWORD=supersecretpassword
 DB_HOST=db
 DB_PORT=5432
 ```
+Important: Ensure this .env file is properly loaded by Docker Compose and all containers (web, db, and cron) have access to these variables.
 
 ### Using Docker
 
@@ -132,12 +134,6 @@ docker-compose up
 python manage.py runserver
 ```
 
-### Locally (production mode)
-
-```bash
-gunicorn url_shortener.wsgi:application --bind 0.0.0.0:8000
-```
-
 The API will be available at: `http://localhost:8000/api/`
 
 ## API Endpoints
@@ -175,6 +171,60 @@ The API will be available at: `http://localhost:8000/api/`
     "Last visitor": "2023-05-12T15:23:45Z"
   }
   ```
+
+## Cron Job
+
+To automate periodic deactivation of expired short URLs, the project uses a cron job running inside a dedicated Docker container (`url_shortener-cron-1`).
+
+### Operation
+
+* The cron job runs every minute and executes the Django management command:
+
+```bash
+python manage.py deactivate_urls
+```
+
+* This command updates all expired URLs by setting their `is_active` flag to `False`.
+* Cron job logs are stored in `/var/log/cron.log` inside the cron container.
+
+### Setup Configuration
+
+### Crontab Configuration
+
+The crontab file (`/etc/cron.d/crontab`) should contain:
+
+```
+* * * * * root cd /app && /usr/local/bin/python manage.py deactivate_urls >> /var/log/cron.log 2>&1
+```
+
+### Important Setup Notes
+
+* Set proper permissions for the crontab file:
+
+```bash
+chmod 0644 /etc/cron.d/crontab
+```
+
+* Environment variables (`POSTGRES_USER`, `POSTGRES_DB`, etc.) must be correctly passed to the cron container via Docker Compose `env_file` to allow database connection.
+
+### Container Entrypoint
+
+In the `entrypoint.sh` of the cron container:
+* The cron daemon is started with:
+
+```bash
+cron && tail -f /var/log/cron.log
+```
+
+* Avoid calling `crontab /etc/cron.d/crontab` explicitly, as cron reads files in `/etc/cron.d/` automatically.
+
+## Manual Testing
+
+You can manually test the command inside the cron container with:
+
+```bash
+docker exec -it url_shortener-cron-1 python3 manage.py deactivate_urls
+```
 
 ## Data Models
 
@@ -242,7 +292,12 @@ python manage.py test shortener
 
 ```
 url-shortener/
-├── .env                     # Environment variables (not versioned)
+├── cron
+│   ├── crontab              # Crontab configuration
+│   ├── dockerfile           # Docker image for cron job build configuration
+│   └── entrypoint.sh        # Container entrypoint
+├── .dev                     # Environment variables for development use (not versioned)
+├── .local                   # Environment variables for local use (not versioned)
 ├── .gitignore               # Files ignored by git
 ├── db.sqlite3               # Local SQLite database (for development)
 ├── docker-compose.yml       # Docker Compose configuration
